@@ -104,7 +104,7 @@ public class StepExecution {
         aPlugin.put("name", "ecs_bundler");
         aPlugin.put("version", "1.0.1");
         aPlugin.put("file", "Gemfile");
-        aPlugin.put("command", "./ecs_bundler");
+        aPlugin.put("command", "ecs_bundler");
         aPlugin.put("args", " -k %s -u %s --url %s -p %s");
         aPlugins.put(aPlugin.get("name"), aPlugin);
         aPlugin = new HashMap<String, String>();
