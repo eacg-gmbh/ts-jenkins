@@ -37,7 +37,7 @@ mvn package
 Then go to plugin manager page on jenkins and click on "advanced" tab(*/pluginManager/advanced*).
 
 Then find upload plugin block and choose *.hpi package and click upload.
-![](/doc/img/jenkins-upload-plugin.png)
+<img src="/doc/img/jenkins-upload-plugin.png" alt="jenkins-upload-plugin" width="500px">
 
 ## Usage
 
@@ -48,21 +48,23 @@ Then find upload plugin block and choose *.hpi package and click upload.
   Go to "Manage Jenkins" and click "Configure System"
 configure(/configure).
   
-  ![](/doc/img/jenkins-global-config.png)
+  <img src="/doc/img/jenkins-global-config.png" alt="jenkins-global-config" width="500px">
 
   Then find block called "ecspublisher", change configuration and click "save"
 
 * Secondly you need go to project configuration
   - Add post-build action called "ecspublisher"
   - Type project name
-    ![](/doc/img/jenkins-post-build-action-closed.png)
+
+    <img src="/doc/img/jenkins-post-build-action-closed.png" alt="jenkins-post-build-action-closed" width="500px">
   - If your project has different structure you can specify paths to plugins
   - **You can override global configuration** just toggle checkboxes
-    ![](/doc/img/jenkins-post-build-action-open.png)
+  
+    <img src="/doc/img/jenkins-post-build-action-open.png" alt="jenkins-post-build-action-open" width="500px">
   - Click "save"
 
 After you add post-build action it will automatically create two pages ECS analysis for build and project.
-![](/doc/img/jenkins-ecs-analysis.png)
+<img src="/doc/img/jenkins-ecs-analysis.png" alt="jenkins-ecs-analysis" width="500px">
 
 ## Development
 
