@@ -1,4 +1,4 @@
-package org.eacggmbh.ecspublisher;
+package de.eacg.ecs.publisher;
 
 import hudson.Launcher;
 import hudson.Extension;
@@ -81,7 +81,7 @@ public class PublisherRecorder extends Recorder {
     }
 
     /**
-     * Get ovveride paths
+     * Get override paths
      *
      * @return overridePaths
      */
@@ -90,7 +90,7 @@ public class PublisherRecorder extends Recorder {
     }
 
     /**
-     * Get ovveride credentials
+     * Get override credentials
      *
      * @return overrideCredentials
      */
@@ -99,7 +99,7 @@ public class PublisherRecorder extends Recorder {
     }
 
     /**
-     * Get ovveride break options
+     * Get override break options
      *
      * @return overrideBreakOptions
      */
@@ -110,25 +110,31 @@ public class PublisherRecorder extends Recorder {
     /**
      * Get credentials
      *
-     * @return credetials from global config or from ovverideCredentials
+     * @return credentials from global config or from overrideCredentials
      */
     public PublisherCredentials getCredentials() {
         if (getOverrideCredentials() != null) {
             return getOverrideCredentials();
         }
-        return getDescriptor() != null ? getDescriptor().getCredentials() : new PublisherCredentials();
+        if(getDescriptor() != null && getDescriptor().getCredentials() != null) {
+            return getDescriptor().getCredentials();
+        }
+        return new PublisherCredentials();
     }
 
     /**
      * Get break options
      *
-     * @return breakOptions from global config or from ovverideBreakOptions
+     * @return breakOptions from global config or from overrideBreakOptions
      */
     public PublisherBreakOptions getBreakOptions() {
         if (getOverrideBreakOptions() != null) {
             return getOverrideBreakOptions();
         }
-        return getDescriptor() != null ? getDescriptor().getBreakOptions() : new PublisherBreakOptions();
+        if(getDescriptor() != null && getDescriptor().getBreakOptions() != null) {
+            return getDescriptor().getBreakOptions();
+        }
+        return new PublisherBreakOptions();
     }
 
     /**

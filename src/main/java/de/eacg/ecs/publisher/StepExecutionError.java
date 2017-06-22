@@ -1,4 +1,4 @@
-package org.eacggmbh.ecspublisher;
+package de.eacg.ecs.publisher;
 
 /**
  * Step execution error

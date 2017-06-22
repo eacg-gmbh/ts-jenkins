@@ -1,4 +1,4 @@
-package org.eacggmbh.ecspublisher;
+package de.eacg.ecs.publisher;
 
 import hudson.FilePath;
 import hudson.Launcher;
@@ -108,7 +108,7 @@ public class StepExecution {
         aPlugin.put("args", " -k %s -u %s --url %s -p %s");
         aPlugins.put(aPlugin.get("name"), aPlugin);
         aPlugin = new HashMap<String, String>();
-        aPlugin.put("name", "node");
+        aPlugin.put("name", "ecs-node-client");
         aPlugin.put("version", "1.0.1");
         aPlugin.put("file", "package.json");
         aPlugin.put("command", "node_modules/.bin/ecs-node-client");

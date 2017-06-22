@@ -1,4 +1,4 @@
-package org.eacggmbh.ecspublisher;
+package de.eacg.ecs.publisher;
 
 import net.sf.json.JSONObject;
 

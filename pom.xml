@@ -10,7 +10,8 @@
     <relativePath/>
   </parent>
 
-  <artifactId>ecspublisher</artifactId>
+  <groupId>de.eacg</groupId>
+  <artifactId>ecs-publisher</artifactId>
   <version>1.0.0.beta</version>
   <packaging>hpi</packaging>
 
@@ -19,15 +20,21 @@
   </properties>
 
   <name>ECS publisher</name>
-  <description>ECS publisher</description>
+  <description>Jenkins plugin to transfer dependency information to our ECS server.</description>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/ecspublisher+Plugin</url>
 
   <licenses>
     <license>
-      <name>MIT License</name>
-      <url>http://opensource.org/licenses/MIT</url>
+      <name>MIT</name>
+      <url>https://raw.githubusercontent.com/eacg-gmbh/ecs-jenkins/master/LICENSE</url>
+      <distribution>repo</distribution>
     </license>
   </licenses>
+
+  <organization>
+    <name>EACG, Enterprise Architecture Consulting Group GmbH</name>
+    <url>https://www.eacg.de/</url>
+  </organization>
 
   <developers>
     <developer>

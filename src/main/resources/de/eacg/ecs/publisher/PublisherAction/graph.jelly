@@ -6,13 +6,13 @@
         <j:if test="${scan.getResult() != null}">
             <j:set var="pluginName" value="${scan.getPlugin().get('name')}"/>
             <j:choose>
-                <j:when test="${pluginName == 'node'}"><j:set var="pluginName" value="${%node}"/></j:when>
+                <j:when test="${pluginName == 'ecs-node-client'}"><j:set var="pluginName" value="${%node}"/></j:when>
                 <j:when test="${pluginName == 'ecs_bundler'}"><j:set var="pluginName" value="${%Bundler}"/></j:when>
                 <j:when test="${pluginName == 'eacg-gmbh/ecs-composer'}"><j:set var="pluginName" value="${%Composer}"/></j:when>
             </j:choose>
             <h3>ScanId - ${scan.getProject()} ${pluginName} "${key}"</h3>
             <h4>This information is randomized.</h4>
-            <table class="ecspublisher-table-graph">
+            <table class="ecs-publisher-table-graph">
                 <tr>
                     <th colspan="2">State of Vulnerability</th>
                     <th colspan="2">Compliance State</th>
@@ -49,7 +49,7 @@
             </script>
         </j:if>
     </j:forEach>
-    <link rel="stylesheet" href="${resURL}/plugin/ecspublisher/css/graph.css" type="text/css" media="screen"/>
-    <script language="javascript" type="text/javascript" src="${resURL}/plugin/ecspublisher/js/Chart.min.js"/>
-    <script language="javascript" type="text/javascript" src="${resURL}/plugin/ecspublisher/js/graph.js"/>
+    <link rel="stylesheet" href="${resURL}/plugin/ecs-publisher/css/graph.css" type="text/css" media="screen"/>
+    <script language="javascript" type="text/javascript" src="${resURL}/plugin/ecs-publisher/js/Chart.min.js"/>
+    <script language="javascript" type="text/javascript" src="${resURL}/plugin/ecs-publisher/js/graph.js"/>
 </j:jelly>

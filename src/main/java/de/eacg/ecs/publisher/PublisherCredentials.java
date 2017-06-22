@@ -1,4 +1,4 @@
-package org.eacggmbh.ecspublisher;
+package de.eacg.ecs.publisher;
 
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
@@ -16,7 +16,7 @@ public class PublisherCredentials extends AbstractDescribableImpl<PublisherCrede
     /**
      * UserAgent
      */
-    private final String userAgent = "org/eacggmbh/ecspublisher/1.0.0";
+    private final String userAgent = "de/eacg/ecs/publisher/1.0.0";
     /**
      * Default url
      */

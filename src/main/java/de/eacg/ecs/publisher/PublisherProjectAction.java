@@ -1,11 +1,10 @@
-package org.eacggmbh.ecspublisher;
+package de.eacg.ecs.publisher;
 
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Run;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

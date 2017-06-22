@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-    <script type="text/javascript" src="${resURL}/plugin/ecspublisher/js/breakBuild.js"/>
+    <script type="text/javascript" src="${resURL}/plugin/ecs-publisher/js/breakBuild.js"/>
     <!--Doesn't work anymore in some cases-->
-    <!--<link rel="stylesheet" href="${resURL}/plugin/ecspublisher/css/breakBuild.css" type="text/css" media="screen"/>-->
+    <!--<link rel="stylesheet" href="${resURL}/plugin/ecs-publisher/css/breakBuild.css" type="text/css" media="screen"/>-->
     <script>
         if(!document.getElementById('breakBuild')){
             var head  = document.getElementsByTagName('head')[0];
@@ -10,22 +10,22 @@
             link.id   = 'breakBuild';
             link.rel  = 'stylesheet';
             link.type = 'text/css';
-            link.href = '${resURL}/plugin/ecspublisher/css/breakBuild.css';
+            link.href = '${resURL}/plugin/ecs-publisher/css/breakBuild.css';
             link.media = 'all';
             head.appendChild(link);
         }
     </script>
     <j:set var="field" value="allowBreakBuild"/>
-    <tr class="ecspublisher-break-build">
+    <tr class="ecs-publisher-break-build">
         <td colspan="3"><f:checkbox field="allowBreakBuild" title="${%allowBreakBuild}" checked="${instance.isAllowBreakBuild()}" onclick="javascript:allowBreakBuild(this)"/></td>
         <f:helpLink url="${descriptor.getHelpFile(field)}" featureName="allowBreakBuild"/>
     </tr>
     <f:helpArea/>
     <tr>
-        <td colspan="4" class="ecspublisher-break-build">
+        <td colspan="4" class="ecs-publisher-break-build">
             <fieldset disabled="${instance.isAllowBreakBuild() ? null : true}" class="${instance.isAllowBreakBuild() ? null : 'hidden'}">
                 <legend>${%manageBreakSensitivity}</legend>
-                <div class="ecspublisher-break-build-check">
+                <div class="ecs-publisher-break-build-check">
                     <table>
                         <j:set var="field" value="breakOnVulnerabilities"/>
                         <tr>
@@ -40,7 +40,7 @@
                         <f:radio name="_.breakOnVulnerabilitiesValue" title="${%criticalHitsOnly}" value="${instance.criticalHitsOnly}" checked="${instance.isBreakOnVulnerabilitiesCriticalHitsOnly()}"/>
                     </fieldset>
                 </div>
-                <div class="ecspublisher-break-build-check">
+                <div class="ecs-publisher-break-build-check">
                     <table>
                         <j:set var="field" value="breakOnLegalIssues"/>
                         <tr>
@@ -55,7 +55,7 @@
                         <f:radio name="_.breakOnLegalIssuesValue" title="${%violationsOnly}" value="${instance.violationsOnly}" checked="${instance.isBreakOnLegalIssuesViolationsOnly()}"/>
                     </fieldset>
                 </div>
-                <!--<div class="ecspublisher-break-build-check">-->
+                <!--<div class="ecs-publisher-break-build-check">-->
                     <!--<table>-->
                         <!--<j:set var="field" value="breakOnViabilityIssues"/>-->
                         <!--<tr>-->

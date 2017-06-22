@@ -2,9 +2,20 @@
 <div>
     This plugin allows you to publish project dependencies information to <a href="https://ecs-app.eacg.de/">ECS</a>.
     <br/>
+    <a href="https://ecs.eacg.de/install">Install plugins</a>
     Supported plugins:
-    <br/>
-    eacg-gmbh/ecs-composer version 1.0.1 +
-    <br/>
-    ecs_bundler version 1.0.1 +
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Version</th>
+        </tr>
+        <tr>
+            <td><a href="https://github.com/eacg-gmbh/ecs-composer">eacg-gmbh/ecs-composer</a></td>
+            <td>1.0.1 +</td>
+        </tr>
+        <tr>
+            <td><a href="https://github.com/eacg-gmbh/ecs-bundler">ecs_bundler</a></td>
+            <td>1.0.1 +</td>
+        </tr>
+    </table>
 </div>
