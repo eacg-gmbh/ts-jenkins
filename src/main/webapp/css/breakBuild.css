@@ -1,0 +1,13 @@
+.ecspublisher-break-build fieldset fieldset {
+    border: none;
+    padding: 0px;
+}
+.ecspublisher-break-build .hidden {
+    display: none;
+}
+.ecspublisher-break-build table {
+    width: 100%;
+}
+.ecspublisher-break-build table td:first-child{
+    display: none;
+}

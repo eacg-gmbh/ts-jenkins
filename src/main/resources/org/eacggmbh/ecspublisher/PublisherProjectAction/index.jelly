@@ -1,0 +1,12 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+    <l:layout>
+        <st:include it="${it.project}" page="sidepanel.jelly"/>
+        <l:main-panel>
+            ${it.resetBuild()}
+            <h1>${it.DisplayName}</h1>
+            <h2>Last successful build #${it.buildNumber}</h2>
+            <st:include page="../PublisherAction/graph.jelly"/>
+        </l:main-panel>
+    </l:layout>
+</j:jelly>

@@ -1,0 +1,48 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+    <j:forEach var="scan" items="${it.getScans()}">
+        <j:set var="key" value="${scan.getKey()}"/>
+        <j:set var="scan" value="${scan.getValue()}"/>
+        <j:if test="${scan.getResult() != null}">
+            <h3>ScanId - Project name ${scan.getPlugin().get("name")} "${key}"</h3>
+            <table class="ecspublisher-table-graph">
+                <tr>
+                    <th colspan="2">State of Vulnerability</th>
+                    <th colspan="2">Compliance State</th>
+                </tr>
+                <tr>
+                    <td colspan="2"><canvas id="graph-components-${key}"></canvas></td>
+                    <td colspan="2"><canvas id="graph-licenses-${key}"></canvas></td>
+                </tr>
+                <tr>
+                    <td>${scan.getComponents()} (${%percent(1)})</td>
+                    <td>Overall components</td>
+                    <td>${scan.getLicenses()} (${%percent(1)}) </td>
+                    <td>Overall licenses</td>
+                </tr>
+                <tr>
+                    <td>${scan.getVulnerabilityViolations()} (${%percent(scan.getVulnerabilityViolationsPercent())})</td>
+                    <td>Critical</td>
+                    <td>${scan.getLegalViolations()} (${%percent(scan.getLegalViolationsPercent())}) </td>
+                    <td>Violations</td>
+                </tr>
+                <tr>
+                    <td>${scan.getVulnerabilityWarnings()} (${%percent(scan.getVulnerabilityWarningsPercent())})</td>
+                    <td>Warnings</td>
+                    <td>${scan.getLegalWarnings()} (${%percent(scan.getLegalWarningsPercent())}) </td>
+                    <td>Causing obligations</td>
+                </tr>
+            </table>
+            <script type="text/javascript">
+                var statistics = ${scan.getStatistics()};
+                document.addEventListener("DOMContentLoaded", function() {
+                createGraph('graph-components-${key}', [statistics.vulnerability.warnings, statistics.vulnerability.violations, statistics.components - statistics.vulnerability.warnings - statistics.vulnerability.violations]);
+                createGraph('graph-licenses-${key}', [statistics.legal.warnings, statistics.legal.violations, statistics.licenses - statistics.legal.warnings - statistics.legal.violations]);
+                });
+            </script>
+        </j:if>
+    </j:forEach>
+    <link rel="stylesheet" href="${resURL}/plugin/ecspublisher/css/graph.css" type="text/css" media="screen"/>
+    <script language="javascript" type="text/javascript" src="${resURL}/plugin/ecspublisher/js/Chart.min.js"/>
+    <script language="javascript" type="text/javascript" src="${resURL}/plugin/ecspublisher/js/graph.js"/>
+</j:jelly>

@@ -1,0 +1,430 @@
+package org.eacggmbh.ecspublisher;
+
+import hudson.FilePath;
+import hudson.Launcher;
+import hudson.Proc;
+import hudson.model.*;
+import hudson.util.ArgumentListBuilder;
+import net.sf.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.regex.MatchResult;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Step execution class
+ *
+ * @author Varanytsia Anatolii
+ */
+public class StepExecution {
+    /**
+     * Build
+     */
+    private Run<?, ?> build;
+    /**
+     * workspace
+     */
+    private FilePath workspace;
+    /**
+     * Logger
+     */
+    private PrintStream logger;
+    /**
+     * Launcher
+     */
+    private Launcher launcher;
+    /**
+     * Listener
+     */
+    private TaskListener listener;
+
+    /**
+     * Project name
+     */
+    String project;
+    /**
+     * Credentials
+     */
+    private PublisherCredentials credentials;
+    /**
+     * Break options
+     */
+    private PublisherBreakOptions breakOptions;
+    /**
+     * Paths
+     */
+    private ArrayList<PublisherPath> paths;
+    /**
+     * RestClient
+     */
+    RestClient client;
+    /**
+     * Scans
+     */
+    Map<String, PublisherScan> scans = new HashMap<String, PublisherScan>();
+    /**
+     * Patterns constant
+     */
+    public static final String[] PATTERNS = {"\\{\"scanId\":\"([^\"]*)\"}", "scanId => ([^ \n]*)"};
+    /**
+     * Version pattern constant
+     */
+    public static final String VERSION_PATTERN = "([^ ]*) version ([^\"]*)";
+
+    /**
+     * Plugin list constant
+     */
+    private static final Map<String, Map<String, String>> pluginsList;
+
+    static {
+        Map<String, Map<String, String>> aPlugins = new HashMap<String, Map<String, String>>();
+        Map<String, String> aPlugin = new HashMap<String, String>();
+        aPlugin.put("name", "default_plugin");
+        aPlugin.put("version", "1.0.0");
+        aPlugin.put("file", null);
+        aPlugin.put("command", null);
+        aPlugin.put("args", " -k %s -u %s --url %s -p %s");
+        aPlugins.put(aPlugin.get("name"), aPlugin);
+        aPlugin = new HashMap<String, String>();
+        aPlugin.put("name", "eacg-gmbh/ecs-composer");
+        aPlugin.put("version", "1.0.1");
+        aPlugin.put("file", "composer.json");
+        aPlugin.put("command", "vendor/bin/ecs-composer");
+        aPlugin.put("args", " -k %s -u %s --url %s -p %s");
+        aPlugins.put(aPlugin.get("name"), aPlugin);
+        aPlugin = new HashMap<String, String>();
+        aPlugin.put("name", "ecs_bundler");
+        aPlugin.put("version", "1.0.1");
+        aPlugin.put("file", "Gemfile");
+        aPlugin.put("command", "./ecs_bundler");
+        aPlugin.put("args", " -k %s -u %s --url %s -p %s");
+        aPlugins.put(aPlugin.get("name"), aPlugin);
+        aPlugin = new HashMap<String, String>();
+        aPlugin.put("name", "node");
+        aPlugin.put("version", "1.0.1");
+        aPlugin.put("file", "package.json");
+        aPlugin.put("command", "node_modules/.bin/ecs-node-client");
+        aPlugin.put("args", " %s %s --baseUrl=%s --project=%s");
+        aPlugins.put(aPlugin.get("name"), aPlugin);
+        //ecs_bundler -k apiKey -u userName --url base_url -p project
+        //./vendor/bin/ecs-composer -k apiKey -u userName --url baseUrl -p project
+        //node_modules/.bin/ecs-node-client --project=project --baseUrl=baseUrl
+        pluginsList = Collections.unmodifiableMap(aPlugins);
+    }
+
+    /**
+     * Get scan id from text
+     *
+     * @param text text
+     * @return scanId
+     */
+    protected String getScanId(String text) {
+        for (int i = 0; i < PATTERNS.length; i++) {
+            Pattern mPattern = Pattern.compile(PATTERNS[i]);
+            Matcher matcher = mPattern.matcher(text);
+            if (matcher == null)
+                return null;
+            if (matcher.find())
+                return matcher.toMatchResult().group(1);
+        }
+        return null;
+    }
+
+    /**
+     * Get name and version
+     *
+     * @param path path
+     * @return name and version
+     * @throws StepExecutionError
+     */
+    protected MatchResult getNameAndVersion(String path) throws StepExecutionError {
+        ArgumentListBuilder command = new ArgumentListBuilder();
+        command.addTokenized(path);
+        command.addTokenized("--version");
+        String text = runCommand(command);
+        Pattern mPattern = Pattern.compile(VERSION_PATTERN);
+        Matcher matcher = mPattern.matcher(text);
+        MatchResult nameAndVersion;
+        if (matcher != null && matcher.find()) {
+            nameAndVersion = matcher.toMatchResult();
+            if (nameAndVersion != null) {
+                return nameAndVersion;
+            }
+        }
+        throw new StepExecutionError(Messages.StepExecution_notReturnCorrectNameAndVersion());
+    }
+
+    /**
+     * Run command
+     *
+     * @param command command
+     * @return output
+     * @throws StepExecutionError
+     */
+    protected String runCommand(ArgumentListBuilder command) throws StepExecutionError {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        String message;
+        try {
+            Launcher.ProcStarter ps = launcher.new ProcStarter();
+            ps = ps.cmds(command).stdout(baos);
+            ps = ps.pwd(workspace).envs(build.getEnvironment(listener));
+            Proc proc = launcher.launch(ps);
+            int retcode = proc.join();
+            logger.print(baos.toString());
+            if (retcode == 0) {
+                return baos.toString();
+            } else {
+                message = Messages.StepExecution_commandReturn(retcode);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            message = e.getMessage();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            message = e.getMessage();
+        }
+        throw new StepExecutionError(Messages.StepExecution_problemWithRunningCommand(command.toString()) + "\n" + message);
+    }
+
+    /**
+     * Detect plugins
+     *
+     * @return plugins
+     * @throws StepExecutionError
+     */
+    protected List<Map<String, String>> autoDetectPlugin() throws StepExecutionError {
+        List<Map<String, String>> plugins = new ArrayList<Map<String, String>>();
+        logger.println(Messages.StepExecution_loggerLine() + " " + "Detecting plugins.");
+        try {
+            for (Map.Entry<String, Map<String, String>> entry : pluginsList.entrySet()) {
+                String key = entry.getKey();
+                Map<String, String> aPlugin = entry.getValue();
+                if (aPlugin.get("file") != null && workspace.child(aPlugin.get("file")).exists()) {
+                    MatchResult nameAndVersion = getNameAndVersion(aPlugin.get("command"));
+                    Map<String, String> plugin = new HashMap<String, String>(aPlugin);
+                    plugin.put("version_installed", nameAndVersion.group(2));
+                    plugins.add(plugin);
+                }
+            }
+            return plugins;
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.println("IOException!");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            logger.println("InterruptedException!");
+        }
+        return new ArrayList<Map<String, String>>();
+    }
+
+    /**
+     * Get plugins from paths
+     *
+     * @return plugins
+     * @throws StepExecutionError
+     */
+    protected List<Map<String, String>> getPluginsFromPaths() throws StepExecutionError {
+        List<Map<String, String>> plugins = new ArrayList<Map<String, String>>();
+        logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_autoDetectionDisabled());
+        for (PublisherPath path : paths) {
+            MatchResult nameAndVersion = getNameAndVersion(path.getPath());
+            Map<String, String> aPlugin = pluginsList.get(nameAndVersion.group(1));
+            if (aPlugin == null) {
+                logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_cantFindPlugin());
+                aPlugin = pluginsList.get("default_plugin");
+            }
+            Map<String, String> plugin = new HashMap<String, String>(aPlugin);
+            plugin.put("command", path.getPath());
+            plugin.put("name", nameAndVersion.group(1));
+            plugin.put("version_installed", nameAndVersion.group(2));
+            plugins.add(plugin);
+        }
+        return plugins;
+    }
+
+    /**
+     * Get plugins
+     *
+     * @return plugins
+     * @throws StepExecutionError
+     */
+    protected List<Map<String, String>> getPlugins() throws StepExecutionError {
+        return paths.size() > 0 ? getPluginsFromPaths() : autoDetectPlugin();
+    }
+
+    /**
+     * Check plugins versions
+     *
+     * @param plugins plugins
+     * @throws StepExecutionError
+     */
+    protected void checkPluginsVersions(List<Map<String, String>> plugins) throws StepExecutionError {
+        String message = "";
+        for (Map<String, String> plugin : plugins) {
+            if (plugin.get("version_installed").compareTo(plugin.get("version")) < 0) {
+                message += (message.isEmpty() ? "" : "\n") + Messages.StepExecution_upgradeYourVersion(plugin.get("name"), plugin.get("version"));
+            }
+        }
+        if (!message.isEmpty()) {
+            throw new StepExecutionError(message);
+        }
+    }
+
+    /**
+     * Check credentials
+     *
+     * @throws StepExecutionError
+     */
+    protected void checkCredentials() throws StepExecutionError {
+        if (!client.isAuthorized()) {
+            throw new StepExecutionError(Messages.StepExecution_apiTokenIsWrong());
+        }
+    }
+
+    /**
+     * Run plugins
+     *
+     * @param plugins plugins
+     * @throws StepExecutionError
+     */
+    protected void runPlugins(List<Map<String, String>> plugins) throws StepExecutionError {
+        for (Map<String, String> plugin : plugins) {
+            ArgumentListBuilder command = new ArgumentListBuilder();
+            command.addTokenized(plugin.get("command"));
+            command.addTokenized(String.format(plugin.get("args"), credentials.getApiToken(), credentials.getUserName(), credentials.getUrl(), project));
+            logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_running(command.toString()));
+            String result = runCommand(command);
+            String scanId = getScanId(result == null ? "" : result);
+            if (result == null || scanId == null) {
+                throw new StepExecutionError(Messages.StepExecution_cantGetScanId());
+            } else {
+                scans.put(scanId, new PublisherScan(scanId, plugin));
+            }
+        }
+    }
+
+    /**
+     * Get plugins results
+     *
+     * @throws StepExecutionError
+     */
+    protected void getPluginsResults() throws StepExecutionError {
+        for (Map.Entry<String, PublisherScan> entry : scans.entrySet()) {
+            String key = entry.getKey();
+            PublisherScan scan = entry.getValue();
+            logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_getResultsForScanId(scan.getScanId()));
+            JSONObject scanResult = client.getScanResult(scan.getScanId());
+            if (scanResult == null) {
+                throw new StepExecutionError(Messages.StepExecution_noResultFor(scan.getScanId()));
+            }
+            scan.setResult(scanResult);
+        }
+    }
+
+    /**
+     * Break build
+     *
+     * @throws StepExecutionError
+     */
+    protected void breakBuild() throws StepExecutionError {
+        if (!breakOptions.isAllowBreakBuild()) {
+            return;
+        }
+        for (Map.Entry<String, PublisherScan> entry : scans.entrySet()) {
+            String key = entry.getKey();
+            PublisherScan scan = entry.getValue();
+            JSONObject scanResult = scan.getResult().getJSONObject("statistics");
+            Integer violations, warnings;
+            if (breakOptions.isBreakOnVulnerabilities()) {
+                violations = scanResult.getJSONObject("vulnerability").getInt("violations");
+                warnings = scanResult.getJSONObject("vulnerability").getInt("warnings");
+                if (breakOptions.isBreakOnVulnerabilitiesWarningsAndCritical() && (violations > 0 || warnings > 0)) {
+                    throw new StepExecutionError(Messages.StepExecution_vulnerabilities(violations, warnings));
+                }
+                if (breakOptions.isBreakOnVulnerabilitiesCriticalHitsOnly() && violations > 0) {
+                    throw new StepExecutionError(Messages.StepExecution_vulnerabilities(violations, warnings));
+                }
+            }
+            if (breakOptions.isBreakOnLegalIssues()) {
+                violations = scanResult.getJSONObject("legal").getInt("violations");
+                warnings = scanResult.getJSONObject("legal").getInt("warnings");
+                if (breakOptions.isBreakOnLegalIssuesWarningAndViolations() && (violations > 0 || warnings > 0)) {
+                    throw new StepExecutionError(Messages.StepExecution_legal(violations, warnings));
+                }
+                if (breakOptions.isBreakOnLegalIssuesViolationsOnly() && violations > 0) {
+                    throw new StepExecutionError(Messages.StepExecution_legal(violations, warnings));
+                }
+            }
+//            if (breakOptions.isBreakOnViabilityIssues()) {
+//                violations = scanResult.getJSONObject("viability").getInt("violations");
+//                warnings = scanResult.getJSONObject("viability").getInt("warnings");
+//                if (breakOptions.isBreakOnViabilityIssuesAll() && (violations > 0 || warnings > 0)) {
+//                    throw new StepExecutionError(Messages.StepExecution_viability(violations, warnings));
+//                }
+//                if (breakOptions.isBreakOnViabilityIssuesStrongMismatchesOnly() && violations > 0) {
+//                    throw new StepExecutionError(Messages.StepExecution_viability(violations, warnings));
+//                }
+//            }
+        }
+    }
+
+    /**
+     * Run step execution
+     *
+     * @return boolean
+     */
+    public boolean run() {
+        try {
+            logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_starting());
+            checkCredentials();
+            List<Map<String, String>> plugins = getPlugins();
+            checkPluginsVersions(plugins);
+            runPlugins(plugins);
+            getPluginsResults();
+            breakBuild();
+        } catch (StepExecutionError e) {
+            logger.println(Messages.StepExecution_loggerLine() + " " + e.getMessage());
+            if (breakOptions.isAllowBreakBuild()) {
+                build.setResult(Result.FAILURE);
+            }
+        } finally {
+            build.addAction(new PublisherAction(build, scans));
+            logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_finished());
+        }
+        return build.getResult() != Result.FAILURE;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param build        build
+     * @param workspace    workspace
+     * @param launcher     launcher
+     * @param listener     listener
+     * @param logger       logger
+     * @param project      project
+     * @param paths        paths
+     * @param credentials  credentials
+     * @param breakOptions breakOptions
+     */
+    StepExecution(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, PrintStream logger, String project, ArrayList<PublisherPath> paths, PublisherCredentials credentials, PublisherBreakOptions breakOptions) {
+        this.build = build;
+        this.workspace = workspace;
+        this.launcher = launcher;
+        this.listener = listener;
+        this.logger = logger;
+        this.project = project;
+        this.paths = paths;
+        this.credentials = credentials;
+        this.breakOptions = breakOptions;
+        this.client = new RestClient(credentials, this.logger);
+    }
+}

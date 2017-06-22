@@ -1,0 +1,10 @@
+<?jelly escape-by-default='true'?>
+<div>
+    This plugin allows you to publish project dependencies information to <a href="https://ecs-app.eacg.de/">ECS</a>.
+    <br/>
+    Supported plugins:
+    <br/>
+    eacg-gmbh/ecs-composer version 1.0.1 +
+    <br/>
+    ecs_bundler version 1.0.1 +
+</div>
