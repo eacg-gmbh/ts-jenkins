@@ -2,7 +2,7 @@
 
 Jenkins plugin to transfer dependency information to our ECS server. Find the solution at https://ecs-app.eacg.de
 
-##Requirements
+## Requirements
 
 * Chart.js >= 2.6.0
 * org.apache.httpcomponents.httpclient >=4.5.3
