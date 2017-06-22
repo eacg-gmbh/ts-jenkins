@@ -15,6 +15,10 @@ public class PublisherScan {
      */
     private final String scanId;
     /**
+     * Project name
+     */
+    private final String project;
+    /**
      * Plugin object
      */
     private final Map<String, String> plugin;
@@ -30,6 +34,15 @@ public class PublisherScan {
      */
     public String getScanId() {
         return this.scanId;
+    }
+
+    /**
+     * Get project
+     *
+     * @return project name
+     */
+    public String getProject() {
+        return this.project;
     }
 
     /**
@@ -164,8 +177,9 @@ public class PublisherScan {
      * @param scanId scanId
      * @param plugin plugin
      */
-    PublisherScan(String scanId, Map<String, String> plugin) {
+    PublisherScan(String scanId, String project, Map<String, String> plugin) {
         this.scanId = scanId;
+        this.project = project;
         this.plugin = plugin;
     }
 }

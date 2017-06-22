@@ -9,7 +9,7 @@ public class StepExecutionError extends Exception {
     /**
      * Constructor
      *
-     * @param message
+     * @param message message
      */
     public StepExecutionError(String message) {
         super(message);

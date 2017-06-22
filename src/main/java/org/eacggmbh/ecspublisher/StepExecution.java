@@ -143,7 +143,7 @@ public class StepExecution {
      *
      * @param path path
      * @return name and version
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected MatchResult getNameAndVersion(String path) throws StepExecutionError {
         ArgumentListBuilder command = new ArgumentListBuilder();
@@ -167,7 +167,7 @@ public class StepExecution {
      *
      * @param command command
      * @return output
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected String runCommand(ArgumentListBuilder command) throws StepExecutionError {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -198,7 +198,7 @@ public class StepExecution {
      * Detect plugins
      *
      * @return plugins
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected List<Map<String, String>> autoDetectPlugin() throws StepExecutionError {
         List<Map<String, String>> plugins = new ArrayList<Map<String, String>>();
@@ -229,7 +229,7 @@ public class StepExecution {
      * Get plugins from paths
      *
      * @return plugins
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected List<Map<String, String>> getPluginsFromPaths() throws StepExecutionError {
         List<Map<String, String>> plugins = new ArrayList<Map<String, String>>();
@@ -254,7 +254,7 @@ public class StepExecution {
      * Get plugins
      *
      * @return plugins
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected List<Map<String, String>> getPlugins() throws StepExecutionError {
         return paths.size() > 0 ? getPluginsFromPaths() : autoDetectPlugin();
@@ -264,7 +264,7 @@ public class StepExecution {
      * Check plugins versions
      *
      * @param plugins plugins
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected void checkPluginsVersions(List<Map<String, String>> plugins) throws StepExecutionError {
         String message = "";
@@ -281,7 +281,7 @@ public class StepExecution {
     /**
      * Check credentials
      *
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected void checkCredentials() throws StepExecutionError {
         if (!client.isAuthorized()) {
@@ -293,7 +293,7 @@ public class StepExecution {
      * Run plugins
      *
      * @param plugins plugins
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected void runPlugins(List<Map<String, String>> plugins) throws StepExecutionError {
         for (Map<String, String> plugin : plugins) {
@@ -306,7 +306,7 @@ public class StepExecution {
             if (result == null || scanId == null) {
                 throw new StepExecutionError(Messages.StepExecution_cantGetScanId());
             } else {
-                scans.put(scanId, new PublisherScan(scanId, plugin));
+                scans.put(scanId, new PublisherScan(scanId, project, plugin));
             }
         }
     }
@@ -314,7 +314,7 @@ public class StepExecution {
     /**
      * Get plugins results
      *
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected void getPluginsResults() throws StepExecutionError {
         for (Map.Entry<String, PublisherScan> entry : scans.entrySet()) {
@@ -332,7 +332,7 @@ public class StepExecution {
     /**
      * Break build
      *
-     * @throws StepExecutionError
+     * @throws StepExecutionError StepExecutionError
      */
     protected void breakBuild() throws StepExecutionError {
         if (!breakOptions.isAllowBreakBuild()) {

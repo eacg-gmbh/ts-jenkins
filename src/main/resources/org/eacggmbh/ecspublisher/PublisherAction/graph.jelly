@@ -4,15 +4,22 @@
         <j:set var="key" value="${scan.getKey()}"/>
         <j:set var="scan" value="${scan.getValue()}"/>
         <j:if test="${scan.getResult() != null}">
-            <h3>ScanId - Project name ${scan.getPlugin().get("name")} "${key}"</h3>
+            <j:set var="pluginName" value="${scan.getPlugin().get('name')}"/>
+            <j:choose>
+                <j:when test="${pluginName == 'node'}"><j:set var="pluginName" value="${%node}"/></j:when>
+                <j:when test="${pluginName == 'ecs_bundler'}"><j:set var="pluginName" value="${%Bundler}"/></j:when>
+                <j:when test="${pluginName == 'eacg-gmbh/ecs-composer'}"><j:set var="pluginName" value="${%Composer}"/></j:when>
+            </j:choose>
+            <h3>ScanId - ${scan.getProject()} ${pluginName} "${key}"</h3>
+            <h4>This information is randomized.</h4>
             <table class="ecspublisher-table-graph">
                 <tr>
                     <th colspan="2">State of Vulnerability</th>
                     <th colspan="2">Compliance State</th>
                 </tr>
                 <tr>
-                    <td colspan="2"><canvas id="graph-components-${key}"></canvas></td>
-                    <td colspan="2"><canvas id="graph-licenses-${key}"></canvas></td>
+                    <td colspan="2"><canvas id="graph-components-${key}"/></td>
+                    <td colspan="2"><canvas id="graph-licenses-${key}"/></td>
                 </tr>
                 <tr>
                     <td>${scan.getComponents()} (${%percent(1)})</td>
@@ -34,10 +41,10 @@
                 </tr>
             </table>
             <script type="text/javascript">
-                var statistics = ${scan.getStatistics()};
                 document.addEventListener("DOMContentLoaded", function() {
-                createGraph('graph-components-${key}', [statistics.vulnerability.warnings, statistics.vulnerability.violations, statistics.components - statistics.vulnerability.warnings - statistics.vulnerability.violations]);
-                createGraph('graph-licenses-${key}', [statistics.legal.warnings, statistics.legal.violations, statistics.licenses - statistics.legal.warnings - statistics.legal.violations]);
+                    var statistics = ${scan.getStatistics()};
+                    createGraph('graph-components-${key}', [statistics.vulnerability.warnings, statistics.vulnerability.violations, statistics.components - statistics.vulnerability.warnings - statistics.vulnerability.violations]);
+                    createGraph('graph-licenses-${key}', [statistics.legal.warnings, statistics.legal.violations, statistics.licenses - statistics.legal.warnings - statistics.legal.violations]);
                 });
             </script>
         </j:if>

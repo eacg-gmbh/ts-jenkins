@@ -138,7 +138,7 @@ public class PublisherRecorder extends Recorder {
      * @param launcher launcher
      * @param listener listener
      * @return boolean
-     * @throws InterruptedException
+     * @throws InterruptedException InterruptedException
      */
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException {
@@ -224,7 +224,7 @@ public class PublisherRecorder extends Recorder {
          * @param req      request
          * @param formData formData
          * @return boolean
-         * @throws FormException
+         * @throws FormException FormException
          */
         @Override
         public boolean configure(StaplerRequest req, JSONObject formData) throws FormException {

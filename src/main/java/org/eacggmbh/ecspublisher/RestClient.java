@@ -57,7 +57,18 @@ public class RestClient {
      * @return JSONObject
      */
     public JSONObject getScanResult(String scanId) {
-        String response = "{\"date\":\"2017-05-25T10:05:59.782Z\",\"scanId\":\"RMTM87L4TB3LyCX2S\",\"components\":[],\"licenses\":[],\"statistics\":{\"licenses\":13,\"components\":289,\"legal\":{\"warnings\":3,\"violations\":1},\"vulnerability\":{\"warnings\":10,\"violations\":4},\"viability\":{\"warnings\":68,\"violations\":111},\"integrity\":{\"warnings\":0,\"violations\":5}},\"moduleRequirements\":{\"distribution\":[\"LOCAL\"],\"targetCustomer\":[\"ALL\"],\"targetMarket\":[\"GERMANY\"],\"propertyProtection\":\"OPEN_SOURCE\",\"commercialisation\":[\"NON_COMMERCIAL\"]}}";
+        int licenses = 10 + (int)(Math.random() * 11);
+        int components = 200 + (int)(Math.random() * 101);
+        int legal_warnings = (int)(Math.random() * 11);
+        int legal_violations =(int)(Math.random() * 4);
+        int vulnerability_warnings = (int)(Math.random() * 11);
+        int vulnerability_violations = (int)(Math.random() * 4);
+        String response = "{\"date\":\"2017-05-25T10:05:59.782Z\",\"scanId\":\"RMTM87L4TB3LyCX2S\",\"components\":[],\"licenses\":[]," +
+            "\"statistics\":{\"licenses\":"+licenses+",\"components\":"+components+","+
+            "\"legal\":{\"warnings\":"+legal_warnings+",\"violations\":"+legal_violations+"}," +
+            "\"vulnerability\":{\"warnings\":"+vulnerability_warnings+",\"violations\":"+vulnerability_violations+"}," +
+            "\"viability\":{\"warnings\":68,\"violations\":111}," +
+            "\"integrity\":{\"warnings\":0,\"violations\":5}},\"moduleRequirements\":{\"distribution\":[\"LOCAL\"],\"targetCustomer\":[\"ALL\"],\"targetMarket\":[\"GERMANY\"],\"propertyProtection\":\"OPEN_SOURCE\",\"commercialisation\":[\"NON_COMMERCIAL\"]}}";
         return JSONObject.fromObject(response);
     }
 

@@ -26,7 +26,7 @@ public class PublisherPath extends AbstractDescribableImpl<PublisherPath> {
     /**
      * Get path
      *
-     * @return
+     * @return path
      */
     public String getPath() {
         return this.path;
