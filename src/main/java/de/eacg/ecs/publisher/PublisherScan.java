@@ -163,6 +163,51 @@ public class PublisherScan {
     }
 
     /**
+     * Get url
+     *
+     * @return url
+     */
+    public String getUrl() {
+        return this.result.getString("url");
+    }
+
+    /**
+     * Get project name
+     *
+     * @return project
+     */
+    public String getProjectName() {
+        return this.result.getString("project");
+    }
+
+    /**
+     * Get module name
+     *
+     * @return module name
+     */
+    public String getModuleName() {
+        return this.result.getString("module");
+    }
+
+    /**
+     * Get project id
+     *
+     * @return projectId
+     */
+    public String getProjectId() {
+        return this.result.getString("projectId");
+    }
+
+    /**
+     * Get module id
+     *
+     * @return moduleId
+     */
+    public String getModuleId() {
+        return this.result.getString("moduleId");
+    }
+
+    /**
      * Set result object
      *
      * @param result result

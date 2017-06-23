@@ -19,7 +19,7 @@ public class RestClient {
     /**
      * Api path
      */
-    private final String apiPath = "/api/v1";
+    private final String apiPath = "/api/v1/";
     /**
      * Credentials
      */
@@ -57,19 +57,7 @@ public class RestClient {
      * @return JSONObject
      */
     public JSONObject getScanResult(String scanId) {
-        int licenses = 10 + (int)(Math.random() * 11);
-        int components = 200 + (int)(Math.random() * 101);
-        int legal_warnings = (int)(Math.random() * 11);
-        int legal_violations =(int)(Math.random() * 4);
-        int vulnerability_warnings = (int)(Math.random() * 11);
-        int vulnerability_violations = (int)(Math.random() * 4);
-        String response = "{\"date\":\"2017-05-25T10:05:59.782Z\",\"scanId\":\"RMTM87L4TB3LyCX2S\",\"components\":[],\"licenses\":[]," +
-            "\"statistics\":{\"licenses\":"+licenses+",\"components\":"+components+","+
-            "\"legal\":{\"warnings\":"+legal_warnings+",\"violations\":"+legal_violations+"}," +
-            "\"vulnerability\":{\"warnings\":"+vulnerability_warnings+",\"violations\":"+vulnerability_violations+"}," +
-            "\"viability\":{\"warnings\":68,\"violations\":111}," +
-            "\"integrity\":{\"warnings\":0,\"violations\":5}},\"moduleRequirements\":{\"distribution\":[\"LOCAL\"],\"targetCustomer\":[\"ALL\"],\"targetMarket\":[\"GERMANY\"],\"propertyProtection\":\"OPEN_SOURCE\",\"commercialisation\":[\"NON_COMMERCIAL\"]}}";
-        return JSONObject.fromObject(response);
+        return get("scans/"+ scanId, 8);
     }
 
     /**
@@ -78,7 +66,7 @@ public class RestClient {
      * @return boolean
      */
     public Boolean isAuthorized() {
-        return get("/modules") != null;
+        return get("authorization") != null;
     }
 
     /**
@@ -88,9 +76,47 @@ public class RestClient {
      * @return JSONObject
      */
     public JSONObject get(String path) {
-        return processRequest(Request.Get(credentials.getUrl() + apiPath + path));
+        return processRequest(getRequest("get", path));
     }
 
+    /**
+     * Get response from path
+     *
+     * @param path path
+     * @param retryCount retryCount
+     * @return JSONObject
+     */
+    public JSONObject get(String path, int retryCount) {
+        return repeat("get", path, retryCount);
+    }
+
+    /**
+     * Repeat
+     *
+     * @param type get post head put patch trace delete options
+     * @param path path
+     * @return
+     */
+    private final JSONObject repeat(String type, String path, int retryCount) {
+        JSONObject result = null;
+        int tries = 0;
+        while (result == null && tries < retryCount) {
+            result = processRequest(getRequest(type, path));
+            if(result != null){
+                return result;
+            }
+            tries++;
+            if (tries < retryCount) {
+                logger.println(Messages.RestClient_loggerLine() + " Attempt " + tries + " failed... waiting");
+                try {
+                    Thread.sleep(1000 * tries);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
     /**
      * Process request
      *
@@ -99,12 +125,7 @@ public class RestClient {
      */
     private JSONObject processRequest(Request request) {
         try {
-            return jsonToObject(request.addHeader("User-Agent", credentials.getUserAgent())
-                    .addHeader("X-ApiKey", credentials.getApiToken())
-                    .addHeader("X-User", credentials.getUserName())
-                    .connectTimeout(30000)
-                    .socketTimeout(30000)
-                    .execute().returnContent().asString());
+            return jsonToObject(request.execute().returnContent().asString());
             // will it to rewrite it to buffer
         } catch (HttpResponseException e) {
             if (logger != null)
@@ -118,13 +139,47 @@ public class RestClient {
     }
 
     /**
-     * Json is array
+     * Get request
+     *
+     * @param type get post head put patch trace delete options
+     * @param path path
+     * @return Request
+     */
+    private Request getRequest(String type, String path) {
+        path = credentials.getUrl() + apiPath + path;
+        Request request;
+        if (type.equals("head")) {
+            request = Request.Head(path);
+        } else if (type.equals("post")) {
+            request = Request.Post(path);
+        } else if (type.equals("patch")) {
+            request = Request.Patch(path);
+        } else if (type.equals("put")) {
+            request = Request.Put(path);
+        } else if (type.equals("trace")) {
+            request = Request.Trace(path);
+        } else if (type.equals("delete")) {
+            request = Request.Delete(path);
+        } else if (type.equals("options")) {
+            request = Request.Options(path);
+        } else {
+            request = Request.Get(path);
+        }
+        return request.addHeader("User-Agent", credentials.getUserAgent())
+                .addHeader("X-ApiKey", credentials.getApiToken())
+                .addHeader("X-User", credentials.getUserName())
+                .connectTimeout(30000)
+                .socketTimeout(30000);
+    }
+
+    /**
+     * Json is pattern
      *
      * @param json json
      * @return boolean
      */
-    private final Boolean jsonIsArray(String json) {
-        Pattern mPattern = Pattern.compile("^\\s*\\[");
+    private final Boolean jsonIs(String json, String pattern) {
+        Pattern mPattern = Pattern.compile(pattern);
         Matcher matcher = mPattern.matcher(json);
         if (matcher == null)
             return false;
@@ -134,18 +189,38 @@ public class RestClient {
     }
 
     /**
+     * Json is array
+     *
+     * @param json json
+     * @return boolean
+     */
+    private final Boolean jsonIsArray(String json) {
+        return jsonIs(json, "^\\s*\\[");
+    }
+
+    /**
+     * Json is Hash
+     *
+     * @param json json
+     * @return boolean
+     */
+    private final Boolean jsonIsHash(String json) {
+        return jsonIs(json, "^\\s*\\{");
+    }
+
+    /**
      * Json to object
      *
      * @param json json
      * @return JSONObject
      */
     private final JSONObject jsonToObject(String json) {
-        if (jsonIsArray(json)) {
-            JSONObject result = new JSONObject();
-            result.put("data", JSONArray.fromObject(json));
-            return result;
-        } else {
+        if (jsonIsHash(json)) {
             return JSONObject.fromObject(json);
+        } else {
+            JSONObject result = new JSONObject();
+            result.put("data", jsonIsArray(json) ? JSONArray.fromObject(json) : json);
+            return result;
         }
     }
 }

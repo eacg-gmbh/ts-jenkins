@@ -10,8 +10,13 @@
                 <j:when test="${pluginName == 'ecs_bundler'}"><j:set var="pluginName" value="${%Bundler}"/></j:when>
                 <j:when test="${pluginName == 'eacg-gmbh/ecs-composer'}"><j:set var="pluginName" value="${%Composer}"/></j:when>
             </j:choose>
-            <h3>ScanId - ${scan.getProject()} ${pluginName} "${key}"</h3>
-            <h4>This information is randomized.</h4>
+            <h3>
+                ScanId - ${scan.getProject()} ${pluginName}
+                <j:choose>
+                    <j:when test="${scan.getUrl() != null}"><a href="${scan.getUrl()}">"${key}"</a></j:when>
+                    <j:when test="${scan.getUrl() == null}">"${key}"</j:when>
+                </j:choose>
+            </h3>
             <table class="ecs-publisher-table-graph">
                 <tr>
                     <th colspan="2">State of Vulnerability</th>

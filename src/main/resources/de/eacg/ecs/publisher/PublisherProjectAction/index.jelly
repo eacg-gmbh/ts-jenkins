@@ -5,7 +5,7 @@
         <l:main-panel>
             ${it.resetBuild()}
             <h1>${it.DisplayName}</h1>
-            <h2>Last successful build #${it.buildNumber}</h2>
+            <h2>Last build #${it.buildNumber}</h2>
             <st:include page="../PublisherAction/graph.jelly"/>
         </l:main-panel>
     </l:layout>
