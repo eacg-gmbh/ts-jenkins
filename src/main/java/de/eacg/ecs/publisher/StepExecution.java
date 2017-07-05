@@ -109,14 +109,14 @@ public class StepExecution {
         aPlugins.put(aPlugin.get("name"), aPlugin);
         aPlugin = new HashMap<String, String>();
         aPlugin.put("name", "ecs-node-client");
-        aPlugin.put("version", "1.0.1");
+        aPlugin.put("version", "0.2.0");
         aPlugin.put("file", "package.json");
         aPlugin.put("command", "node_modules/.bin/ecs-node-client");
-        aPlugin.put("args", " %s %s --baseUrl=%s --project=%s");
+        aPlugin.put("args", " -k %s -u %s --url %s -p %s");
         aPlugins.put(aPlugin.get("name"), aPlugin);
         //ecs_bundler -k apiKey -u userName --url base_url -p project
         //./vendor/bin/ecs-composer -k apiKey -u userName --url baseUrl -p project
-        //node_modules/.bin/ecs-node-client --project=project --baseUrl=baseUrl
+        //node_modules/.bin/ecs-node-client  -k apiKey -u userName --url baseUrl -p project
         pluginsList = Collections.unmodifiableMap(aPlugins);
     }
 
@@ -300,6 +300,17 @@ public class StepExecution {
             ArgumentListBuilder command = new ArgumentListBuilder();
             command.addTokenized(plugin.get("command"));
             command.addTokenized(String.format(plugin.get("args"), credentials.getApiToken(), credentials.getUserName(), credentials.getUrl(), project));
+            try {
+                if (plugin.get("name").equals("ecs-node-client") && workspace.child(plugin.get("command")).sibling("../../.meteor").exists()) {
+                    command.addTokenized(" --meteor");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                logger.println("IOException!");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                logger.println("InterruptedException!");
+            }
             logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_running(command.toString()));
             String result = runCommand(command);
             String scanId = getScanId(result == null ? "" : result);
@@ -317,15 +328,19 @@ public class StepExecution {
      * @throws StepExecutionError StepExecutionError
      */
     protected void getPluginsResults() throws StepExecutionError {
+        String message = "";
         for (Map.Entry<String, PublisherScan> entry : scans.entrySet()) {
             String key = entry.getKey();
             PublisherScan scan = entry.getValue();
             logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_getResultsForScanId(scan.getScanId()));
             JSONObject scanResult = client.getScanResult(scan.getScanId());
             if (scanResult == null) {
-                throw new StepExecutionError(Messages.StepExecution_noResultFor(scan.getScanId()));
+                message += (message.isEmpty() ? "" : "\n") + Messages.StepExecution_noResultFor(scan.getScanId());
             }
             scan.setResult(scanResult);
+        }
+        if (!message.isEmpty()) {
+            throw new StepExecutionError(message);
         }
     }
 
