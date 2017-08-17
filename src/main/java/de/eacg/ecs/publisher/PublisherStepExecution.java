@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Step execution class
+ * Publisher Step execution class
  *
  * @author Varanytsia Anatolii
  */
-public class StepExecution {
+public class PublisherStepExecution {
     /**
      * Build
      */
@@ -143,9 +143,9 @@ public class StepExecution {
      *
      * @param path path
      * @return name and version
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected MatchResult getNameAndVersion(String path) throws StepExecutionError {
+    protected MatchResult getNameAndVersion(String path) throws PublisherStepExecutionError {
         ArgumentListBuilder command = new ArgumentListBuilder();
         command.addTokenized(path);
         command.addTokenized("--version");
@@ -159,7 +159,7 @@ public class StepExecution {
                 return nameAndVersion;
             }
         }
-        throw new StepExecutionError(Messages.StepExecution_notReturnCorrectNameAndVersion());
+        throw new PublisherStepExecutionError(Messages.PublisherStepExecution_notReturnCorrectNameAndVersion());
     }
 
     /**
@@ -167,9 +167,9 @@ public class StepExecution {
      *
      * @param command command
      * @return output
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected String runCommand(ArgumentListBuilder command) throws StepExecutionError {
+    protected String runCommand(ArgumentListBuilder command) throws PublisherStepExecutionError {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         String message;
         try {
@@ -182,7 +182,7 @@ public class StepExecution {
             if (retcode == 0) {
                 return baos.toString();
             } else {
-                message = Messages.StepExecution_commandReturn(retcode);
+                message = Messages.PublisherStepExecution_commandReturn(retcode);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -191,18 +191,18 @@ public class StepExecution {
             e.printStackTrace();
             message = e.getMessage();
         }
-        throw new StepExecutionError(Messages.StepExecution_problemWithRunningCommand(command.toString()) + "\n" + message);
+        throw new PublisherStepExecutionError(Messages.PublisherStepExecution_problemWithRunningCommand(command.toString()) + "\n" + message);
     }
 
     /**
      * Detect plugins
      *
      * @return plugins
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected List<Map<String, String>> autoDetectPlugin() throws StepExecutionError {
+    protected List<Map<String, String>> autoDetectPlugin() throws PublisherStepExecutionError {
         List<Map<String, String>> plugins = new ArrayList<Map<String, String>>();
-        logger.println(Messages.StepExecution_loggerLine() + " " + "Detecting plugins.");
+        logger.println(Messages.PublisherStepExecution_loggerLine() + " " + "Detecting plugins.");
         try {
             for (Map.Entry<String, Map<String, String>> entry : pluginsList.entrySet()) {
                 String key = entry.getKey();
@@ -229,16 +229,16 @@ public class StepExecution {
      * Get plugins from paths
      *
      * @return plugins
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected List<Map<String, String>> getPluginsFromPaths() throws StepExecutionError {
+    protected List<Map<String, String>> getPluginsFromPaths() throws PublisherStepExecutionError {
         List<Map<String, String>> plugins = new ArrayList<Map<String, String>>();
-        logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_autoDetectionDisabled());
+        logger.println(Messages.PublisherStepExecution_loggerLine() + " " + Messages.PublisherStepExecution_autoDetectionDisabled());
         for (PublisherPath path : paths) {
             MatchResult nameAndVersion = getNameAndVersion(path.getPath());
             Map<String, String> aPlugin = pluginsList.get(nameAndVersion.group(1));
             if (aPlugin == null) {
-                logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_cantFindPlugin());
+                logger.println(Messages.PublisherStepExecution_loggerLine() + " " + Messages.PublisherStepExecution_cantFindPlugin());
                 aPlugin = pluginsList.get("default_plugin");
             }
             Map<String, String> plugin = new HashMap<String, String>(aPlugin);
@@ -254,9 +254,9 @@ public class StepExecution {
      * Get plugins
      *
      * @return plugins
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected List<Map<String, String>> getPlugins() throws StepExecutionError {
+    protected List<Map<String, String>> getPlugins() throws PublisherStepExecutionError {
         return paths.size() > 0 ? getPluginsFromPaths() : autoDetectPlugin();
     }
 
@@ -264,28 +264,28 @@ public class StepExecution {
      * Check plugins versions
      *
      * @param plugins plugins
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected void checkPluginsVersions(List<Map<String, String>> plugins) throws StepExecutionError {
+    protected void checkPluginsVersions(List<Map<String, String>> plugins) throws PublisherStepExecutionError {
         String message = "";
         for (Map<String, String> plugin : plugins) {
             if (plugin.get("version_installed").compareTo(plugin.get("version")) < 0) {
-                message += (message.isEmpty() ? "" : "\n") + Messages.StepExecution_upgradeYourVersion(plugin.get("name"), plugin.get("version"));
+                message += (message.isEmpty() ? "" : "\n") + Messages.PublisherStepExecution_upgradeYourVersion(plugin.get("name"), plugin.get("version"));
             }
         }
         if (!message.isEmpty()) {
-            throw new StepExecutionError(message);
+            throw new PublisherStepExecutionError(message);
         }
     }
 
     /**
      * Check credentials
      *
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected void checkCredentials() throws StepExecutionError {
+    protected void checkCredentials() throws PublisherStepExecutionError {
         if (!client.isAuthorized()) {
-            throw new StepExecutionError(Messages.StepExecution_apiTokenIsWrong());
+            throw new PublisherStepExecutionError(Messages.PublisherStepExecution_apiTokenIsWrong());
         }
     }
 
@@ -293,9 +293,9 @@ public class StepExecution {
      * Run plugins
      *
      * @param plugins plugins
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected void runPlugins(List<Map<String, String>> plugins) throws StepExecutionError {
+    protected void runPlugins(List<Map<String, String>> plugins) throws PublisherStepExecutionError {
         for (Map<String, String> plugin : plugins) {
             ArgumentListBuilder command = new ArgumentListBuilder();
             command.addTokenized(plugin.get("command"));
@@ -311,11 +311,11 @@ public class StepExecution {
                 e.printStackTrace();
                 logger.println("InterruptedException!");
             }
-            logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_running(command.toString()));
+            logger.println(Messages.PublisherStepExecution_loggerLine() + " " + Messages.PublisherStepExecution_running(command.toString()));
             String result = runCommand(command);
             String scanId = getScanId(result == null ? "" : result);
             if (result == null || scanId == null) {
-                throw new StepExecutionError(Messages.StepExecution_cantGetScanId());
+                throw new PublisherStepExecutionError(Messages.PublisherStepExecution_cantGetScanId());
             } else {
                 scans.put(scanId, new PublisherScan(scanId, project, plugin));
             }
@@ -325,31 +325,31 @@ public class StepExecution {
     /**
      * Get plugins results
      *
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected void getPluginsResults() throws StepExecutionError {
+    protected void getPluginsResults() throws PublisherStepExecutionError {
         String message = "";
         for (Map.Entry<String, PublisherScan> entry : scans.entrySet()) {
             String key = entry.getKey();
             PublisherScan scan = entry.getValue();
-            logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_getResultsForScanId(scan.getScanId()));
+            logger.println(Messages.PublisherStepExecution_loggerLine() + " " + Messages.PublisherStepExecution_getResultsForScanId(scan.getScanId()));
             JSONObject scanResult = client.getScanResult(scan.getScanId());
             if (scanResult == null) {
-                message += (message.isEmpty() ? "" : "\n") + Messages.StepExecution_noResultFor(scan.getScanId());
+                message += (message.isEmpty() ? "" : "\n") + Messages.PublisherStepExecution_noResultFor(scan.getScanId());
             }
             scan.setResult(scanResult);
         }
         if (!message.isEmpty()) {
-            throw new StepExecutionError(message);
+            throw new PublisherStepExecutionError(message);
         }
     }
 
     /**
      * Break build
      *
-     * @throws StepExecutionError StepExecutionError
+     * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
-    protected void breakBuild() throws StepExecutionError {
+    protected void breakBuild() throws PublisherStepExecutionError {
         if (!breakOptions.isAllowBreakBuild()) {
             return;
         }
@@ -362,57 +362,57 @@ public class StepExecution {
                 violations = scanResult.getJSONObject("vulnerability").getInt("violations");
                 warnings = scanResult.getJSONObject("vulnerability").getInt("warnings");
                 if (breakOptions.isBreakOnVulnerabilitiesWarningsAndCritical() && (violations > 0 || warnings > 0)) {
-                    throw new StepExecutionError(Messages.StepExecution_vulnerabilities(violations, warnings));
+                    throw new PublisherStepExecutionError(Messages.PublisherStepExecution_vulnerabilities(violations, warnings));
                 }
                 if (breakOptions.isBreakOnVulnerabilitiesCriticalHitsOnly() && violations > 0) {
-                    throw new StepExecutionError(Messages.StepExecution_vulnerabilities(violations, warnings));
+                    throw new PublisherStepExecutionError(Messages.PublisherStepExecution_vulnerabilities(violations, warnings));
                 }
             }
             if (breakOptions.isBreakOnLegalIssues()) {
                 violations = scanResult.getJSONObject("legal").getInt("violations");
                 warnings = scanResult.getJSONObject("legal").getInt("warnings");
                 if (breakOptions.isBreakOnLegalIssuesWarningAndViolations() && (violations > 0 || warnings > 0)) {
-                    throw new StepExecutionError(Messages.StepExecution_legal(violations, warnings));
+                    throw new PublisherStepExecutionError(Messages.PublisherStepExecution_legal(violations, warnings));
                 }
                 if (breakOptions.isBreakOnLegalIssuesViolationsOnly() && violations > 0) {
-                    throw new StepExecutionError(Messages.StepExecution_legal(violations, warnings));
+                    throw new PublisherStepExecutionError(Messages.PublisherStepExecution_legal(violations, warnings));
                 }
             }
 //            if (breakOptions.isBreakOnViabilityIssues()) {
 //                violations = scanResult.getJSONObject("viability").getInt("violations");
 //                warnings = scanResult.getJSONObject("viability").getInt("warnings");
 //                if (breakOptions.isBreakOnViabilityIssuesAll() && (violations > 0 || warnings > 0)) {
-//                    throw new StepExecutionError(Messages.StepExecution_viability(violations, warnings));
+//                    throw new PublisherStepExecutionError(Messages.PublisherStepExecution_viability(violations, warnings));
 //                }
 //                if (breakOptions.isBreakOnViabilityIssuesStrongMismatchesOnly() && violations > 0) {
-//                    throw new StepExecutionError(Messages.StepExecution_viability(violations, warnings));
+//                    throw new PublisherStepExecutionError(Messages.PublisherStepExecution_viability(violations, warnings));
 //                }
 //            }
         }
     }
 
     /**
-     * Run step execution
+     * Run publisher step execution
      *
      * @return boolean
      */
     public boolean run() {
         try {
-            logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_starting());
+            logger.println(Messages.PublisherStepExecution_loggerLine() + " " + Messages.PublisherStepExecution_starting());
             checkCredentials();
             List<Map<String, String>> plugins = getPlugins();
             checkPluginsVersions(plugins);
             runPlugins(plugins);
             getPluginsResults();
             breakBuild();
-        } catch (StepExecutionError e) {
-            logger.println(Messages.StepExecution_loggerLine() + " " + e.getMessage());
+        } catch (PublisherStepExecutionError e) {
+            logger.println(Messages.PublisherStepExecution_loggerLine() + " " + e.getMessage());
             if (breakOptions.isAllowBreakBuild()) {
                 build.setResult(Result.FAILURE);
             }
         } finally {
             build.addAction(new PublisherAction(build, scans));
-            logger.println(Messages.StepExecution_loggerLine() + " " + Messages.StepExecution_finished());
+            logger.println(Messages.PublisherStepExecution_loggerLine() + " " + Messages.PublisherStepExecution_finished());
         }
         return build.getResult() != Result.FAILURE;
     }
@@ -430,7 +430,7 @@ public class StepExecution {
      * @param credentials  credentials
      * @param breakOptions breakOptions
      */
-    StepExecution(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, PrintStream logger, String project, ArrayList<PublisherPath> paths, PublisherCredentials credentials, PublisherBreakOptions breakOptions) {
+    PublisherStepExecution(Run<?, ?> build, FilePath workspace, Launcher launcher, TaskListener listener, PrintStream logger, String project, ArrayList<PublisherPath> paths, PublisherCredentials credentials, PublisherBreakOptions breakOptions) {
         this.build = build;
         this.workspace = workspace;
         this.launcher = launcher;

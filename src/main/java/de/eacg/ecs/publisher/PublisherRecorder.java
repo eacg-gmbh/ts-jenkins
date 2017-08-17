@@ -148,8 +148,8 @@ public class PublisherRecorder extends Recorder {
      */
     @Override
     public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException {
-        StepExecution stepExecution = new StepExecution(build, build.getWorkspace(), launcher, listener, listener.getLogger(), getProject(), getOverridePaths(), getCredentials(), getBreakOptions());
-        return stepExecution.run();
+        PublisherStepExecution publisherStepExecution = new PublisherStepExecution(build, build.getWorkspace(), launcher, listener, listener.getLogger(), getProject(), getOverridePaths(), getCredentials(), getBreakOptions());
+        return publisherStepExecution.run();
     }
 
     /**

@@ -5,13 +5,13 @@ package de.eacg.ecs.publisher;
  *
  * @author Varanytsia Anatolii
  */
-public class StepExecutionError extends Exception {
+public class PublisherStepExecutionError extends Exception {
     /**
      * Constructor
      *
      * @param message message
      */
-    public StepExecutionError(String message) {
+    public PublisherStepExecutionError(String message) {
         super(message);
     }
 }
