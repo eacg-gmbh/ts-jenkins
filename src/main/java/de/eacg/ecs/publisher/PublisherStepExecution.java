@@ -10,14 +10,10 @@ import net.sf.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.*;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Publisher Step execution class
@@ -73,7 +69,7 @@ public class PublisherStepExecution {
     /**
      * Patterns constant
      */
-    public static final String[] PATTERNS = {"\\{\"scanId\":\"([^\"]*)\"}", "scanId => ([^ \n]*)"};
+    public static final List<String> PATTERNS = Collections.unmodifiableList(Arrays.asList("\\{\"scanId\":\"([^\"]*)\"}", "scanId => ([^ \n]*)"));
     /**
      * Version pattern constant
      */
@@ -127,11 +123,9 @@ public class PublisherStepExecution {
      * @return scanId
      */
     protected String getScanId(String text) {
-        for (int i = 0; i < PATTERNS.length; i++) {
-            Pattern mPattern = Pattern.compile(PATTERNS[i]);
+        for (String pattern : PATTERNS) {
+            Pattern mPattern = Pattern.compile(pattern);
             Matcher matcher = mPattern.matcher(text);
-            if (matcher == null)
-                return null;
             if (matcher.find())
                 return matcher.toMatchResult().group(1);
         }
@@ -178,9 +172,8 @@ public class PublisherStepExecution {
             ps = ps.pwd(workspace).envs(build.getEnvironment(listener));
             Proc proc = launcher.launch(ps);
             int retcode = proc.join();
-            logger.print(baos.toString());
             if (retcode == 0) {
-                return baos.toString();
+                return baos.toString("utf-8");
             } else {
                 message = Messages.PublisherStepExecution_commandReturn(retcode);
             }
@@ -267,14 +260,14 @@ public class PublisherStepExecution {
      * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
     protected void checkPluginsVersions(List<Map<String, String>> plugins) throws PublisherStepExecutionError {
-        String message = "";
+        StringBuilder messageBuilder = new StringBuilder();
         for (Map<String, String> plugin : plugins) {
             if (plugin.get("version_installed").compareTo(plugin.get("version")) < 0) {
-                message += (message.isEmpty() ? "" : "\n") + Messages.PublisherStepExecution_upgradeYourVersion(plugin.get("name"), plugin.get("version"));
+                messageBuilder.append((messageBuilder.length() == 0 ? "" : "\n") + Messages.PublisherStepExecution_upgradeYourVersion(plugin.get("name"), plugin.get("version")));
             }
         }
-        if (!message.isEmpty()) {
-            throw new PublisherStepExecutionError(message);
+        if (messageBuilder.length() != 0) {
+            throw new PublisherStepExecutionError(messageBuilder.toString());
         }
     }
 
@@ -313,7 +306,7 @@ public class PublisherStepExecution {
             }
             logger.println(Messages.PublisherStepExecution_loggerLine() + " " + Messages.PublisherStepExecution_running(command.toString()));
             String result = runCommand(command);
-            String scanId = getScanId(result == null ? "" : result);
+            String scanId = getScanId(result);
             if (result == null || scanId == null) {
                 throw new PublisherStepExecutionError(Messages.PublisherStepExecution_cantGetScanId());
             } else {
@@ -328,19 +321,19 @@ public class PublisherStepExecution {
      * @throws PublisherStepExecutionError PublisherStepExecutionError
      */
     protected void getPluginsResults() throws PublisherStepExecutionError {
-        String message = "";
+        StringBuilder messageBuilder = new StringBuilder();
         for (Map.Entry<String, PublisherScan> entry : scans.entrySet()) {
             String key = entry.getKey();
             PublisherScan scan = entry.getValue();
             logger.println(Messages.PublisherStepExecution_loggerLine() + " " + Messages.PublisherStepExecution_getResultsForScanId(scan.getScanId()));
             JSONObject scanResult = client.getScanResult(scan.getScanId());
             if (scanResult == null) {
-                message += (message.isEmpty() ? "" : "\n") + Messages.PublisherStepExecution_noResultFor(scan.getScanId());
+                messageBuilder.append((messageBuilder.length() == 0 ? "" : "\n") + Messages.PublisherStepExecution_noResultFor(scan.getScanId()));
             }
             scan.setResult(scanResult);
         }
-        if (!message.isEmpty()) {
-            throw new PublisherStepExecutionError(message);
+        if (messageBuilder.length() != 0) {
+            throw new PublisherStepExecutionError(messageBuilder.toString());
         }
     }
 

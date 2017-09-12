@@ -19,7 +19,7 @@ public class RestClient {
     /**
      * Api path
      */
-    private final String apiPath = "/api/v1/";
+    static private final String apiPath = "/api/v1/";
     /**
      * Credentials
      */
@@ -181,8 +181,6 @@ public class RestClient {
     private final Boolean jsonIs(String json, String pattern) {
         Pattern mPattern = Pattern.compile(pattern);
         Matcher matcher = mPattern.matcher(json);
-        if (matcher == null)
-            return false;
         if (matcher.find())
             return true;
         return false;

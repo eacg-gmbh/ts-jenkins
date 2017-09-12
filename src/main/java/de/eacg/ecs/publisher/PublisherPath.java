@@ -3,6 +3,8 @@ package de.eacg.ecs.publisher;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.Extension;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -40,17 +42,26 @@ public class PublisherPath extends AbstractDescribableImpl<PublisherPath> {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == this) return true;
+        if (!(obj instanceof PublisherPath)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final PublisherPath other = (PublisherPath) obj;
-        if ((this.path == null) ? (other.path != null) : !this.path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        final PublisherPath publisherPath = (PublisherPath) obj;
+        return new EqualsBuilder()
+                .append(path, publisherPath.path)
+                .isEquals();
+    }
+
+    /**
+     * Return hashCode
+     *
+     * @return int
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(path)
+                .toHashCode();
     }
 
     /**

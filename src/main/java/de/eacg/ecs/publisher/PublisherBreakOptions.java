@@ -3,6 +3,8 @@ package de.eacg.ecs.publisher;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
@@ -258,35 +260,38 @@ public class PublisherBreakOptions extends AbstractDescribableImpl<PublisherBrea
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == this) return true;
+        if (!(obj instanceof PublisherBreakOptions)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final PublisherBreakOptions other = (PublisherBreakOptions) obj;
-        if ((this.allowBreakBuild == null) ? (other.allowBreakBuild != null) : !this.allowBreakBuild.equals(other.allowBreakBuild)) {
-            return false;
-        }
-        if ((this.breakOnVulnerabilities == null) ? (other.breakOnVulnerabilities != null) : !this.breakOnVulnerabilities.equals(other.breakOnVulnerabilities)) {
-            return false;
-        }
-        if ((this.breakOnVulnerabilitiesValue == null) ? (other.breakOnVulnerabilitiesValue != null) : !this.breakOnVulnerabilitiesValue.equals(other.breakOnVulnerabilitiesValue)) {
-            return false;
-        }
-        if ((this.breakOnLegalIssues == null) ? (other.breakOnLegalIssues != null) : !this.breakOnLegalIssues.equals(other.breakOnLegalIssues)) {
-            return false;
-        }
-        if ((this.breakOnLegalIssuesValue == null) ? (other.breakOnLegalIssuesValue != null) : !this.breakOnLegalIssuesValue.equals(other.breakOnLegalIssuesValue)) {
-            return false;
-        }
-        if ((this.breakOnViabilityIssues == null) ? (other.breakOnViabilityIssues != null) : !this.breakOnViabilityIssues.equals(other.breakOnViabilityIssues)) {
-            return false;
-        }
-        if ((this.breakOnViabilityIssuesValue == null) ? (other.breakOnViabilityIssuesValue != null) : !this.breakOnViabilityIssuesValue.equals(other.breakOnViabilityIssuesValue)) {
-            return false;
-        }
-        return true;
+        final PublisherBreakOptions publisherBreakOptions = (PublisherBreakOptions) obj;
+        return new EqualsBuilder()
+                .append(allowBreakBuild, publisherBreakOptions.allowBreakBuild)
+                .append(breakOnVulnerabilities, publisherBreakOptions.breakOnVulnerabilities)
+                .append(breakOnVulnerabilitiesValue, publisherBreakOptions.breakOnVulnerabilitiesValue)
+                .append(breakOnLegalIssues, publisherBreakOptions.breakOnLegalIssues)
+                .append(breakOnLegalIssuesValue, publisherBreakOptions.breakOnLegalIssuesValue)
+                .append(breakOnViabilityIssues, publisherBreakOptions.breakOnViabilityIssues)
+                .append(breakOnViabilityIssuesValue, publisherBreakOptions.breakOnViabilityIssuesValue)
+                .isEquals();
+    }
+
+    /**
+     * Return hashCode
+     *
+     * @return int
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(allowBreakBuild)
+                .append(breakOnVulnerabilities)
+                .append(breakOnVulnerabilitiesValue)
+                .append(breakOnLegalIssues)
+                .append(breakOnLegalIssuesValue)
+                .append(breakOnViabilityIssues)
+                .append(breakOnViabilityIssuesValue)
+                .toHashCode();
     }
 
     /**

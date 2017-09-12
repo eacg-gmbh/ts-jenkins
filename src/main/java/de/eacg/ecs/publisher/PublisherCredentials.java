@@ -4,6 +4,8 @@ import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
@@ -110,23 +112,30 @@ public class PublisherCredentials extends AbstractDescribableImpl<PublisherCrede
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj == null) {
+        if (obj == this) return true;
+        if (!(obj instanceof PublisherCredentials)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final PublisherCredentials other = (PublisherCredentials) obj;
-        if ((this.apiToken == null) ? (other.apiToken != null) : !this.apiToken.equals(other.apiToken)) {
-            return false;
-        }
-        if ((this.userName == null) ? (other.userName != null) : !this.userName.equals(other.userName)) {
-            return false;
-        }
-        if ((this.baseUrl == null) ? (other.baseUrl != null) : !this.baseUrl.equals(other.baseUrl)) {
-            return false;
-        }
-        return true;
+        final PublisherCredentials publisherCredentials = (PublisherCredentials) obj;
+        return new EqualsBuilder()
+                .append(apiToken, publisherCredentials.apiToken)
+                .append(userName, publisherCredentials.userName)
+                .append(baseUrl, publisherCredentials.baseUrl)
+                .isEquals();
+    }
+
+    /**
+     * Return hashCode
+     *
+     * @return int
+     */
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(apiToken)
+                .append(userName)
+                .append(baseUrl)
+                .toHashCode();
     }
 
     /**

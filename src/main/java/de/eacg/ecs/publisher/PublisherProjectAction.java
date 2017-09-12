@@ -74,7 +74,7 @@ public class PublisherProjectAction implements Action {
      *
      * @return build number
      */
-    public int getBuildNumber() {
+    public Integer getBuildNumber() {
         return getBuild() != null ? getBuild().number : null;
     }
 
