@@ -20,8 +20,6 @@ There are two ways to install that plugin.
 
 **First way** is installation from jenkins.
 
-**That way is not available now since plugin is under beta testing.**
-
 To do that go to plugin manager page on jenkins and click on "available" tab(*/pluginManager/available*).
 Then find plugin by name "ecspublisher", toggle checkbox and click install.
 
@@ -75,3 +73,8 @@ Just run command:
 ./run
 ```
 Jenkins will be available on port [8089](http://localhost:8089/jenkins)
+
+## Deploy
+```
+mvn release:prepare release:perform
+```
