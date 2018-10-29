@@ -1,4 +1,4 @@
-# TrustSource Pluign 4 Jenkins 
+# TrustSource Plugin 4 Jenkins 
 
 Jenkins plugin to transfer dependency information to TrustSource service (OpenSource Compliance & Vulnerabilities). Find more about trustSource at https://app.trustsource.io
 
