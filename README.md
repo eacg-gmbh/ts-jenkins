@@ -1,6 +1,6 @@
-# ECS Publisher 
+# TrustSource Pluign 4 Jenkins 
 
-Jenkins plugin to transfer dependency information to our ECS server. Find the solution at https://ecs-app.eacg.de
+Jenkins plugin to transfer dependency information to TrustSource service (OpenSource Compliance & Vulnerabilities). Find more about trustSource at https://app.trustsource.io
 
 ## Requirements
 
@@ -42,23 +42,20 @@ Then find upload plugin block and choose *.hpi package and click upload.
 
 * First you need to setup global configuration for this plugin.
   
-  **You can skip that step** if you want to save configuration under step definition.
+**You can skip that step** if you want to save configuration under step definition.
 
-  Go to "Manage Jenkins" and click "Configure System"
-configure(/configure).
+Go to "Manage Jenkins" and click "Configure System" configure(/configure).
   
-  <kbd><img src="/doc/img/jenkins-global-config.png" alt="jenkins-global-config" width="500px"></kbd>
+<kbd><img src="/doc/img/jenkins-global-config.png" alt="jenkins-global-config" width="500px"></kbd>
 
-  Then find block called "ecspublisher", change configuration and click "save"
+Then find block called "ecspublisher", change configuration and click "save"
 
 * Secondly you need go to project configuration
   - Add post-build action called "ecspublisher"
   - Type project name
-
     <kbd><img src="/doc/img/jenkins-post-build-action-closed.png" alt="jenkins-post-build-action-closed" width="500px"></kbd>
   - If your project has different structure you can specify paths to plugins
   - **You can override global configuration** just toggle checkboxes
-  
     <kbd><img src="/doc/img/jenkins-post-build-action-open.png" alt="jenkins-post-build-action-open" width="500px"></kbd>
   - Click "save"
 
