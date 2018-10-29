@@ -2,6 +2,8 @@
 
 Jenkins plugin to transfer dependency information to TrustSource service (OpenSource Compliance & Vulnerabilities). It does not only allow transferring the dependencies and automated vulnerability assessment but also to warn or break builds depending on legal status. Find more about trustSource at https://app.trustsource.io
 
+![some screenshot](https://github.com/eacg-gmbh/ecs-jenkins/blob/master/doc/img/jenkins-ecs-analysis.png)
+
 ## Requirements
 
 * Chart.js >= 2.6.0
