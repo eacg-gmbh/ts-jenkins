@@ -1,6 +1,6 @@
-# ECS Publisher 
+# TrustSource Publisher 
 
-Jenkins plugin to transfer dependency information to our ECS server. Find the solution at https://ecs-app.eacg.de
+Jenkins plugin to transfer dependency information to our TrustSource server. Find mor information about TrustSource at https://www.trustsource.io
 
 ## Requirements
 
@@ -13,19 +13,21 @@ Jenkins plugin to transfer dependency information to our ECS server. Find the so
 * [eacg-gmbh/ecs-composer](https://github.com/eacg-gmbh/ecs-composer) version 1.0.1 +
 * [ecs_bundler](https://github.com/eacg-gmbh/ecs-bundler) version 1.0.1 +
 * [ecs-node-client](https://github.com/eacg-gmbh/ecs-node-client) version 0.2.0+
+* [maven-plugin](https://github.com/eacg-gmbh/)
+* [gradle-plugin](https://github.com/eacg-gmbh/)
 
 ## Installation
 
 There are two ways to install that plugin.
 
-**First way** is installation from jenkins.
+**1) installation through jenkins**
 
 To do that go to plugin manager page on jenkins and click on "available" tab(*/pluginManager/available*).
 Then find plugin by name "ecspublisher", toggle checkbox and click install.
 
 
-**Second way** is installation from source code.
-To do that run commands:
+**2) install from source**
+Run the following commands:
 ```
 # Clone source code
 git clone git@github.com:eacg-gmbh/ecs-jenkins.git
