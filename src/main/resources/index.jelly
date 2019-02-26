@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
 <div>
-    This plugin allows you to publish project dependencies information to <a href="https://ecs-app.eacg.de/">ECS</a>.
+    This plugin allows you to publish project dependencies information to <a href="https://app.trustsource.io/">TrustSource</a>.
     <br/>
-    <a href="https://ecs.eacg.de/install">Install plugins</a>
+    <a href="https://support.trustsource.io/hc/en-us/articles/115003456825-Which-integrations-are-available-for-TrustSource-">Install plugins</a>
     Supported plugins:
     <table>
         <tr>
@@ -19,6 +19,14 @@
         </tr>
         <tr>
             <td><a href="https://github.com/eacg-gmbh/ecs-node-client">ecs-node-client</a></td>
+            <td>0.2.0 +</td>
+        </tr>
+        <tr>
+            <td><a href="https://github.com/eacg-gmbh/ecs-maven-plugin">ts-maven-plugin</a></td>
+            <td>0.2.0 +</td>
+        </tr>
+        <tr>
+            <td><a href="https://github.com/eacg-gmbh/ecs-gradle-plugin">ts-gradle-plugin</a></td>
             <td>0.2.0 +</td>
         </tr>
     </table>
