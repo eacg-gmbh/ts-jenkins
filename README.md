@@ -15,7 +15,7 @@ Jenkins plugin to transfer dependency information to TrustSource service (OpenSo
 * [eacg-gmbh/ecs-composer](https://github.com/eacg-gmbh/ecs-composer) version 1.0.1 +
 * [ecs_bundler](https://github.com/eacg-gmbh/ecs-bundler) version 1.0.1 +
 * [ecs-node-client](https://github.com/eacg-gmbh/ecs-node-client) version 0.2.5+
-* [ts-maven-plugin](https://github.com/eacg-gmbh/ecs-mvn-plugin) version 0.2.0+
+* [ts-maven-plugin](https://github.com/eacg-gmbh/ecs-mvn-plugin) version 0.1.9+
 * [ts-gradle-plugin](https://github.com/eacg-gmbh/ecs-gradle-plugin) version 0.2.0+ 
 
 ## Installation
