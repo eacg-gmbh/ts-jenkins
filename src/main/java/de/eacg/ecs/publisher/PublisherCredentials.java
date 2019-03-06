@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import hudson.util.Secret;
 
 /**
  * Class to save credentials information.
@@ -26,7 +27,7 @@ public class PublisherCredentials extends AbstractDescribableImpl<PublisherCrede
     /**
      * Api token
      */
-    private final String apiToken;
+    private final Secret apiToken;
     /**
      * User name
      */
@@ -45,7 +46,7 @@ public class PublisherCredentials extends AbstractDescribableImpl<PublisherCrede
      */
     @DataBoundConstructor
     public PublisherCredentials(String apiToken, String userName, String baseUrl) {
-        this.apiToken = apiToken;
+        this.apiToken = Secret.fromString(apiToken);
         this.userName = userName;
         this.baseUrl = baseUrl;
     }
@@ -54,7 +55,7 @@ public class PublisherCredentials extends AbstractDescribableImpl<PublisherCrede
      * Constructor
      */
     public PublisherCredentials() {
-        this.apiToken = "";
+        this.apiToken = Secret.fromString("");
         this.userName = "";
         this.baseUrl = "";
     }
@@ -64,7 +65,7 @@ public class PublisherCredentials extends AbstractDescribableImpl<PublisherCrede
      *
      * @return apiToken
      */
-    public String getApiToken() {
+    public Secret getApiToken() {
         return apiToken;
     }
 
