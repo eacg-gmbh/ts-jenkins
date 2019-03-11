@@ -19,7 +19,7 @@ public class PublisherCredentials extends AbstractDescribableImpl<PublisherCrede
     /**
      * UserAgent
      */
-    private final String userAgent = "de/eacg/ecs/publisher/1.0.0";
+    private final String userAgent = "de/eacg/ecs/publisher/1.0.1";
     /**
      * Default url
      */

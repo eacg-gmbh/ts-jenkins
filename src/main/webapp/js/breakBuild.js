@@ -1,6 +1,6 @@
 function allowBreakBuild(component){
 	var rootElement = component;
-	while(!elementHasClass(rootElement, 'publisher-break-build')){
+	while(!elementHasClass(rootElement, 'ecs-publisher-break-build')){
 		rootElement = rootElement.parentElement;
 	}
 	var fieldset = rootElement.nextSibling.nextSibling.querySelector('fieldset');
@@ -10,7 +10,7 @@ function allowBreakBuild(component){
 
 function allowBreakBuildField(component){
 	var rootElement = component;
-	while(!elementHasClass(rootElement, 'publisher-break-build-check')){
+	while(!elementHasClass(rootElement, 'ecs-publisher-break-build-check')){
 		rootElement = rootElement.parentElement;
 	}
 	var fieldset = rootElement.querySelector('fieldset');
