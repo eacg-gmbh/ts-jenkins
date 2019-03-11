@@ -1,3 +1,4 @@
 #!/bin/sh
 
 mvn clean && mvn hpi:run -Dhudson.Main.development=true -Djetty.port=8089
+# mvn clean && mvnDebug hpi:run -Dhudson.Main.development=true -Djetty.port=8089

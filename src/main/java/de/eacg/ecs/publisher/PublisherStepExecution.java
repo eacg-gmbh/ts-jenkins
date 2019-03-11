@@ -5,6 +5,7 @@ import hudson.Launcher;
 import hudson.Proc;
 import hudson.model.*;
 import hudson.util.ArgumentListBuilder;
+import hudson.util.Secret;
 import net.sf.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
@@ -87,28 +88,28 @@ public class PublisherStepExecution {
         aPlugin.put("version", "1.0.0");
         aPlugin.put("file", null);
         aPlugin.put("command", null);
-        aPlugin.put("args", " -k %s -u %s --url %s -p %s");
+        aPlugin.put("args", "-k %s -u %s --url %s -p %s");
         aPlugins.put(aPlugin.get("name"), aPlugin);
         aPlugin = new HashMap<String, String>();
         aPlugin.put("name", "eacg-gmbh/ecs-composer");
         aPlugin.put("version", "1.0.1");
         aPlugin.put("file", "composer.json");
         aPlugin.put("command", "vendor/bin/ecs-composer");
-        aPlugin.put("args", " -k %s -u %s --url %s -p %s");
+        aPlugin.put("args", "-k %s -u %s --url %s -p %s");
         aPlugins.put(aPlugin.get("name"), aPlugin);
         aPlugin = new HashMap<String, String>();
         aPlugin.put("name", "ecs_bundler");
         aPlugin.put("version", "1.0.1");
         aPlugin.put("file", "Gemfile");
         aPlugin.put("command", "ecs_bundler");
-        aPlugin.put("args", " -k %s -u %s --url %s -p %s");
+        aPlugin.put("args", "-k %s -u %s --url %s -p %s");
         aPlugins.put(aPlugin.get("name"), aPlugin);
         aPlugin = new HashMap<String, String>();
         aPlugin.put("name", "ecs-node-client");
         aPlugin.put("version", "0.2.0");
         aPlugin.put("file", "package.json");
         aPlugin.put("command", "node_modules/.bin/ecs-node-client");
-        aPlugin.put("args", " -k %s -u %s --url %s -p %s");
+        aPlugin.put("args", "-k %s -u %s --url %s -p %s");
         aPlugins.put(aPlugin.get("name"), aPlugin);
         //ecs_bundler -k apiKey -u userName --url base_url -p project
         //./vendor/bin/ecs-composer -k apiKey -u userName --url baseUrl -p project
@@ -292,7 +293,10 @@ public class PublisherStepExecution {
         for (Map<String, String> plugin : plugins) {
             ArgumentListBuilder command = new ArgumentListBuilder();
             command.addTokenized(plugin.get("command"));
-            command.addTokenized(String.format(plugin.get("args"), credentials.getApiToken(), credentials.getUserName(), credentials.getUrl(), project));
+            String[] args = String.format(plugin.get("args"), Secret.toString(credentials.getApiToken()), credentials.getUserName(), credentials.getUrl(), project).split(" ");
+            for (int i = 0; i < args.length; i++) {
+                command.add(args[i], i == 1); // i == 1 ApiToken have to be masked
+            }
             try {
                 if (plugin.get("name").equals("ecs-node-client") && workspace.child(plugin.get("command")).sibling("../../.meteor").exists()) {
                     command.addTokenized(" --meteor");

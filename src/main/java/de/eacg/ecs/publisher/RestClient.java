@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import hudson.util.Secret;
 import net.sf.json.JSONObject;
 import net.sf.json.JSONArray;
 import org.apache.http.client.HttpResponseException;
@@ -166,7 +167,7 @@ public class RestClient {
             request = Request.Get(path);
         }
         return request.addHeader("User-Agent", credentials.getUserAgent())
-                .addHeader("X-ApiKey", credentials.getApiToken())
+                .addHeader("X-ApiKey", Secret.toString(credentials.getApiToken()))
                 .addHeader("X-User", credentials.getUserName())
                 .connectTimeout(30000)
                 .socketTimeout(30000);
