@@ -22,11 +22,11 @@
             <td>0.2.0 +</td>
         </tr>
         <tr>
-            <td><a href="https://github.com/eacg-gmbh/ecs-maven-plugin">ts-maven-plugin</a></td>
+            <td><a href="https://github.com/eacg-gmbh/ecs-maven-plugin">ecs-maven-plugin</a></td>
             <td>0.2.0 +</td>
         </tr>
         <tr>
-            <td><a href="https://github.com/eacg-gmbh/ecs-gradle-plugin">ts-gradle-plugin</a></td>
+            <td><a href="https://github.com/eacg-gmbh/ecs-gradle-plugin">ecs-gradle-plugin</a></td>
             <td>0.2.0 +</td>
         </tr>
     </table>

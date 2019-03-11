@@ -2,7 +2,7 @@
 
 Jenkins plugin to transfer dependency information to TrustSource service (OpenSource Compliance & Vulnerabilities). It does not only allow transferring the dependencies and automated vulnerability assessment but also to warn or break builds depending on legal status. Find more about trustSource at https://app.trustsource.io
 
-![some screenshot](https://github.com/eacg-gmbh/ecs-jenkins/blob/master/doc/img/jenkins-ecs-analysis.png)
+![some screenshot](https://github.com/jenkinsci/ecs-publisher-plugin/blob/master/doc/img/jenkins-ecs-analysis.png)
 
 ## Requirements
 
@@ -25,14 +25,14 @@ There are two ways to install that plugin.
 **1) installation through jenkins**
 
 To do that go to plugin manager page on jenkins and click on "available" tab(*/pluginManager/available*).
-Then find plugin by name "ecspublisher", toggle checkbox and click install.
+Then find plugin by name "ecs-publisher", toggle checkbox and click install.
 
 
 **2) install from source**
 Run the following commands:
 ```
 # Clone source code
-git clone git@github.com:eacg-gmbh/ecs-jenkins.git
+git clone git@github.com:jenkinsci/ecs-publisher-plugin
 # Generate *.hpi package
 mvn package
 # package will be located at target/ecspublisher.hpi
@@ -52,7 +52,7 @@ Go to "Manage Jenkins" and click "Configure System" configure(/configure).
   
 <kbd><img src="/doc/img/jenkins-global-config.png" alt="jenkins-global-config" width="500px"></kbd>
 
-Then find block called "ecspublisher", change configuration and click "save"
+Then find block called "TrustSource publisher", change configuration and click "save"
 
 * Secondly you need go to project configuration
   - Add post-build action called "ecspublisher"
@@ -79,3 +79,12 @@ Jenkins will be available on port [8089](http://localhost:8089/jenkins)
 ```
 mvn release:prepare release:perform
 ```
+## Changelog
+
+#### 1.1.0
+- Added maven and gradle support
+- Added branch, tag sending support
+
+#### 1.0.1
+- Updated default url to `app.trustsource.io`
+- Security changes

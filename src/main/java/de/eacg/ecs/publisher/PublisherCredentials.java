@@ -23,7 +23,7 @@ public class PublisherCredentials extends AbstractDescribableImpl<PublisherCrede
     /**
      * Default url
      */
-    private final String defaultUrl = "https://ecs-app.eacg.de";
+    private final String defaultUrl = "https://app.trustsource.io";
     /**
      * Api token
      */
