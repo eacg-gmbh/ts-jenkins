@@ -14,22 +14,22 @@ Jenkins plugin to transfer dependency information to TrustSource service (OpenSo
 
 * [eacg-gmbh/ecs-composer](https://github.com/eacg-gmbh/ecs-composer) version 1.0.1 +
 * [ecs_bundler](https://github.com/eacg-gmbh/ecs-bundler) version 1.0.1 +
-* [ecs-node-client](https://github.com/eacg-gmbh/ecs-node-client) version 0.2.5+
-* [ts-maven-plugin](https://github.com/eacg-gmbh/ecs-mvn-plugin) version 0.1.9+
-* [ts-gradle-plugin](https://github.com/eacg-gmbh/ecs-gradle-plugin) version 0.2.0+ 
+* [ecs-node-client](https://github.com/eacg-gmbh/ecs-node-client) version 0.2.0+
+* [ecs-maven-plugin](https://github.com/eacg-gmbh/ecs-mvn-plugin) version 0.1.9+
+* [ecs-gradle-plugin](https://github.com/eacg-gmbh/ecs-gradle-plugin) version 0.2.0+ 
 
 ## Installation
 
 There are two ways to install that plugin.
 
-**First way** is installation from jenkins.
+**1) installation through jenkins**
 
 To do that go to plugin manager page on jenkins and click on "available" tab(*/pluginManager/available*).
 Then find plugin by name "ecspublisher", toggle checkbox and click install.
 
 
-**Second way** is installation from source code.
-To do that run commands:
+**2) install from source**
+Run the following commands:
 ```
 # Clone source code
 git clone git@github.com:eacg-gmbh/ecs-jenkins.git
